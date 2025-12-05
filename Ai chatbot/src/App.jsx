@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import useChat from "./hooks/useChat";
+import Message from "./components/Message";
+import InputArea from "./components/InputArea";
+import Header from "./components/Header";
+import HistorySidebar from "./components/HistorySidebar";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    chatHistory,
+    startNewChat,
+    loadChat,
+    deleteChat,
+    clearAllChats,
+    currentChatId,
+  } = useChat();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="flex flex-col h-screen bg-gray-50">
+      <Header
+        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+        onNewChat={startNewChat}
+      />
 
-export default App
+      <div className="flex flex-1 overflow-hidden">
+        <HistorySidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          chatHistory={chatHistory}
+          onSelectChat={(index) => {
+            loadChat(index);
+            setSidebarOpen(false);
+          }}
+          onDeleteChat={deleteChat}
+          onClearAll={clearAllChats}
+          currentChatId={currentChatId}
+        />
+
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col p-4 overflow-hidden">
+          <div className="flex-1 overflow-y-auto mb-4">
+            {messages.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center p-6 max-w-md">
+                  <h2 className="text-xl font-semibold mb-2">
+                    LIT Student AI Assistant
+                  </h2>
+                  <p className="text-gray-600">
+                    Start a new chat or select one from your history
+                  </p>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg, index) => (
+                <Message
+                  key={index}
+                  sender={msg.sender}
+                  text={msg.text}
+                  isError={msg.isError}
+                />
+              ))
+            )}
+          </div>
+
+          <InputArea onSend={sendMessage} isLoading={isLoading} />
+        </div>
+      </div>
+    </div>
+  );
+}
