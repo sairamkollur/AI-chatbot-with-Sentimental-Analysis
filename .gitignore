@@ -1,0 +1,29 @@
+# --- Frontend (Ai chatbot) ---
+Ai chatbot/node_modules/
+Ai chatbot/dist/
+Ai chatbot/.env
+Ai chatbot/*.local
+
+# --- Backend ---
+backend/venv/
+backend/__pycache__/
+backend/.env
+backend/*.pyc
+
+# --- General ---
+.vscode/
+.DS_Store
+*.log
+
+# Ignore Frontend heavy files
+Ai chatbot/node_modules/
+Ai chatbot/dist/
+
+# Ignore Backend environment and private keys
+backend/venv/
+backend/__pycache__/
+backend/.env
+
+# Ignore system files
+.DS_Store
+.vscode/
